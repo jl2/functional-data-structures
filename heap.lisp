@@ -55,4 +55,27 @@
                      (list (if value (cons key value) key))
                      (to-list left-child)
                      (to-list right-child)))))
-    
+
+(defun spaces (n)
+  (format nil (format nil "~~~aa" (if n n 0)) ""))
+
+(defgeneric show-heap (heap &optional stream indentation)
+  (:documentation "Pretty print a heap to stream.")
+
+  (:method ((heap (eql nil)) &optional stream indentation)
+    (declare (ignorable indentation))
+    (format stream "nil~%")
+    heap)
+
+  (:method ((heap heap) &optional stream indentation)
+    (if (or (null heap) (empty-p heap))
+        (format stream "nil~%")
+        (let ((space-string (spaces indentation)))
+          (format stream "(~a ~a):~%" (slot-value heap 'key) (slot-value heap 'value))
+          (format stream "~a|~%" space-string)
+          (format stream "~a+-" space-string)
+          (show-heap (slot-value heap 'left-child) stream (+ 2 indentation))
+          (format stream "~a|~%" space-string)
+          (format stream "~a+-" space-string)
+          (show-heap (slot-value heap 'right-child) stream (+ 2 indentation))))
+    heap))
