@@ -1,19 +1,19 @@
-;;;; binary-heap.lisp
+;;;; heap.lisp
 ;;;;
 ;;;; Copyright (c) 2017 Jeremiah LaRocco <jeremiah_larocco@fastmail.com>
 
 (in-package #:fds)
 
-(defclass binary-heap ()
+(defclass heap ()
   ((empty :initform t :accessor empty-p)
    (key :initarg :key :initform nil :accessor key)
    (predicate :initform #'< :initarg :predicate :reader predicate)
    (value :initform nil :initarg :value :accessor value)
-   (left-child :initform nil :initarg :left-child :type (or 'binary-heap nil) :accessor :left-child)
-   (right-child :initform nil :initarg :right-child :type (or 'binary-heap nil) :accessor :right-child))
-  (:documentation "A generic binary-heap base class."))
+   (left-child :initform nil :initarg :left-child :type (or 'heap nil) :accessor :left-child)
+   (right-child :initform nil :initarg :right-child :type (or 'heap nil) :accessor :right-child))
+  (:documentation "A generic heap base class."))
 
-(defmethod initialize-instance :after ((heap binary-heap) &key key)
+(defmethod initialize-instance :after ((heap heap) &key key)
   "Initialize the :empty slot depending on whether a :key parameter was given or not."
   (when key
     (setf (slot-value heap 'empty) nil)))
@@ -35,9 +35,9 @@
   (:documentation "Merge two heaps.")
   (:method ((a (eql nil)) (b (eql nil)))
     nil)
-  (:method ((a (eql nil)) (b binary-heap))
+  (:method ((a (eql nil)) (b heap))
     b)
-  (:method ((a binary-heap) (b (eql nil)))
+  (:method ((a heap) (b (eql nil)))
     a))
 
 (defgeneric rank (heap)
@@ -49,7 +49,7 @@
   (:documentation "Return a list containing the key/value pairs in the heap, with the minimum key first.")
   (:method ((heap (eql nil)))
     nil)
-  (:method ((heap binary-heap))
+  (:method ((heap heap))
     (with-slots (key value left-child right-child) heap
         (concatenate 'list
                      (list (if value (cons key value) key))

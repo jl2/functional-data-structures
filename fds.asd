@@ -10,6 +10,6 @@
   :depends-on (#:alexandria)
   :components ((:file "package")
                (:file "fds")
-               (:file "binary-heap")
+               (:file "heap")
                (:file "leftist-heap")))
 

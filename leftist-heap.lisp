@@ -4,7 +4,7 @@
 
 (in-package #:fds)
 
-(defclass leftist (binary-heap)
+(defclass leftist (heap)
   ((rank :initform 1 :initarg :rank :type fixnum :reader rank))
   (:documentation "A [leftist heap](https://en.wikipedia.org/wiki/Leftist_heap) data structure."))
 
