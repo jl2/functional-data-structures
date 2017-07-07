@@ -5,19 +5,12 @@
 (in-package #:fds)
 
 (defclass heap ()
-  ((empty :initform t :accessor empty-p)
-   (key :initarg :key :initform nil :accessor key)
-   (predicate :initform #'< :initarg :predicate :reader predicate)
-   (value :initform nil :initarg :value :accessor value)
-   (left-child :initform nil :initarg :left-child :type (or 'heap nil) :accessor :left-child)
-   (right-child :initform nil :initarg :right-child :type (or 'heap nil) :accessor :right-child))
+  ((predicate :initform #'< :initarg :predicate :reader predicate))
   (:documentation "A generic heap base class."))
 
-(defmethod initialize-instance :after ((heap heap) &key key)
-  "Initialize the :empty slot depending on whether a :key parameter was given or not."
-  (when key
-    (setf (slot-value heap 'empty) nil)))
-           
+(defgeneric empty-p (heap)
+  (:documentation "Test if the heap is empty."))
+
 (defgeneric find-min (heap)
   (:documentation "Find the key value pair in the heap with the minimum key value.")
   (:method ((heap (eql nil)))
@@ -40,21 +33,11 @@
   (:method ((a heap) (b (eql nil)))
     a))
 
-(defgeneric rank (heap)
-  (:documentation "Return the length of the right 'spine' of the heap.")
-  (:method ((heap (eql nil)))
-    0))  
-
 (defgeneric to-list (heap)
   (:documentation "Return a list containing the key/value pairs in the heap, with the minimum key first.")
   (:method ((heap (eql nil)))
     nil)
-  (:method ((heap heap))
-    (with-slots (key value left-child right-child) heap
-        (concatenate 'list
-                     (list (if value (cons key value) key))
-                     (to-list left-child)
-                     (to-list right-child)))))
+  )
 
 (defun spaces (n)
   (format nil (format nil "~~~aa" (if n n 0)) ""))
@@ -65,15 +48,4 @@
   (:method ((heap (eql nil)) &optional stream indentation)
     (declare (ignorable indentation))
     (format stream "nil~%")
-    heap)
-
-  (:method ((heap heap) &optional stream indentation)
-    (if (or (null heap) (empty-p heap))
-        (format stream "nil~%")
-        (let ((space-string (spaces indentation)))
-          (format stream "~a ~@[(~a) ~]~%" (slot-value heap 'key) (slot-value heap 'value))
-          (format stream "~a+-" space-string)
-          (show-heap (slot-value heap 'left-child) stream (+ 2 indentation))
-          (format stream "~a+-" space-string)
-          (show-heap (slot-value heap 'right-child) stream (+ 2 indentation))))
     heap))

@@ -10,7 +10,7 @@
    #:binomial #:leftist #:fibonacci
 
    ;; Queries
-   #:key #:value #:find-min #:predicate #:rank #:empty-p
+   #:key #:value #:find-min #:predicate #:empty-p
 
    ;; Modifications
    #:insert #:pop-min

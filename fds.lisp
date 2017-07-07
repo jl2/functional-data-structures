@@ -54,7 +54,6 @@
 
     ;; Test some things about an empty heap
     (expect-pred "empty-p of empty heap" #'empty-p the-heap)
-    (expect-pred "rank of empty heap is 0" #'zerop (rank the-heap))
     (expect-error "pop-min on empty heap signals error" (pop-min the-heap))
     (expect-error "find-min on empty heap signals error" (find-min the-heap))
 
