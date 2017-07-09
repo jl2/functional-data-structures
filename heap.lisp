@@ -42,10 +42,16 @@
 (defun spaces (n)
   (format nil (format nil "~~~aa" (if n n 0)) ""))
 
-(defgeneric show-heap (heap &optional stream indentation)
+(defgeneric show-heap (heap stream indentation)
   (:documentation "Pretty print a heap to stream.")
 
-  (:method ((heap (eql nil)) &optional stream indentation)
+  (:method ((heap (eql nil)) stream indentation)
     (declare (ignorable indentation))
     (format stream "nil~%")
+    heap))
+
+(defgeneric to-dot (heap stream)
+  (:documentation "Output dot digraph.")
+  (:method ((heap (eql nil)) stream)
+    (format stream "nil;~%")
     heap))

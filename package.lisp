@@ -16,7 +16,7 @@
    #:insert #:pop-min
 
    ;; Helpful utilities
-   #:merge-heaps #:to-list #:show-heap
+   #:merge-heaps #:to-list #:show-heap #:to-dot #:to-web
    
    #:run-tests))
 

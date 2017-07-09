@@ -7,7 +7,7 @@
   :author "Jeremiah LaRocco <jeremiah_larocco@fastmail.com>"
   :license "ISC (BSD-like)"
   :serial t
-  :depends-on (#:alexandria)
+  :depends-on (#:alexandria #:uiop)
   :components ((:file "package")
                (:file "fds")
                (:file "heap")

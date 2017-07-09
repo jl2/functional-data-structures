@@ -91,3 +91,42 @@
     (expect-error "heap is empty after ten calls to pop-min" (pop-min the-heap))
 
     ))
+
+
+
+(defun to-web (size output-dir)
+  "Generate PNG images and an HTML file showing the progression of adding 'size' nodes and then removing them."
+  (ensure-directories-exist output-dir)
+  (let ((h (make-instance 'fds:leftist)))
+    (with-open-file (html (merge-pathnames output-dir "sequence.html") 
+                          :direction :output :if-exists :supersede :if-does-not-exist :create)
+
+
+      (format html "<html><head><title>Leftist Heap</title></head><body>~%")
+      (dotimes (i size)
+        (format html "<img src=\"lh~a.png\"/>~%" i)
+        (when (= 1 (mod i 2))
+          (format html "<br/><hr/>"))
+
+        (setf h (fds:insert h (random 1000)))
+
+        (let ((dot-name (merge-pathnames output-dir (format nil "lh~a.dot" i)))
+              (png-name (merge-pathnames output-dir (format nil "lh~a.png" i))))
+          (with-open-file (outs dot-name :direction :output :if-exists :supersede :if-does-not-exist :create)
+            (fds:to-dot h outs))
+          (uiop:run-program (format nil "dot -Tpng -o ~a ~a" png-name dot-name))))
+
+      (format html "<br/><hr/>")
+
+      (dotimes (i size)
+        (format html "<img src=\"lh~a.png\"/>~%" (+ i size))
+        (when (= 1 (mod i 2))
+          (format html "<br/><hr/>"))
+        (setf h (fds:pop-min h))
+
+        (let ((dot-name (merge-pathnames output-dir (format nil "lh~a.dot" (+ i size))))
+              (png-name (merge-pathnames output-dir (format nil "lh~a.png" (+ i size)))))
+          (with-open-file (outs dot-name :direction :output :if-exists :supersede :if-does-not-exist :create)
+            (fds:to-dot h outs))
+          (uiop:run-program (format nil "dot -Tpng -o ~a ~a" png-name dot-name))))
+      (format html "</body></html>"))))

@@ -99,7 +99,7 @@
   (to-list (slot-value heap 'nodes)))
 
 
-(defmethod show-heap ((nodes leftist-node) &optional stream indentation)
+(defmethod show-heap ((nodes leftist-node) stream indentation)
   "Write a text representation of the leftist-node structure to stream."
   (if (null nodes)
       (format stream "nil~%")
@@ -112,6 +112,33 @@
           (show-heap right-child stream (+ 2 indentation)))))
   nodes)
 
-(defmethod show-heap ((heap leftist) &optional stream indentation)
+(defmethod show-heap ((heap leftist) stream indentation)
   "Write a text representation of the leftist heap to stream."
-  (show-heap (slot-value heap 'nodes)))
+  (show-heap (slot-value heap 'nodes) stream indentation)
+  heap)
+
+(defmethod to-dot ((nodes leftist-node) stream)
+  "Write a dot digraph of the node structure to stream."
+  (labels ((inner-to-dot (nodes stream count)
+             (with-slots (key value left-child right-child) nodes
+               (let ((o-count count)
+                     (n-count count))
+                 (format stream "~a [label=\"~a~@[ (~a) ~]\",shape=box];~%" count key value)
+                 (when left-child 
+                   (format stream "~a->~a;~%" count (+ 1 count))
+                   (setf n-count (inner-to-dot left-child stream (+ 1 count))))
+                 (when right-child
+                   (format stream "~a->~a;~%" count (+ 1 n-count))
+                   (setf n-count (inner-to-dot right-child stream (+ 1 n-count))))
+                 n-count))))
+    (inner-to-dot nodes stream 0)))
+
+
+(defmethod to-dot ((heap leftist) stream)
+  "Write a dot digraph of the heap to stream."
+  (format stream "digraph G {~%")
+
+  (to-dot (slot-value heap 'nodes) stream)
+
+  (format stream "}~%")
+  heap)
