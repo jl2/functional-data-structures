@@ -58,14 +58,17 @@
     (t 
      (with-slots (predicate (tree1 nodes)) h1
        (with-slots ((tree2 nodes)) h2
-         (make-instance 'leftist :nodes (merge-nodes predicate tree1 tree2)))))))
+         (make-instance 'leftist
+                        :nodes (merge-nodes predicate tree1 tree2)
+                        :predicate predicate))))))
 
 (defmethod insert ((heap leftist) new-key &optional new-value)
   "Insert new-key new-value pair into the heap."
   (make-instance 'leftist
                  :nodes (merge-nodes (slot-value heap 'predicate)
                                      (make-instance 'leftist-node :key new-key :value new-value)
-                                     (slot-value heap 'nodes))))
+                                     (slot-value heap 'nodes))
+                 :predicate (slot-value heap 'predicate)))
 
 (defmethod find-min ((heap leftist))
   "Return the key value pair with the minimum key value."

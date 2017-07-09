@@ -11,5 +11,6 @@
   :components ((:file "package")
                (:file "fds")
                (:file "heap")
-               (:file "leftist-heap")))
+               (:file "leftist-heap")
+               (:file "binomial-heap")))
 
