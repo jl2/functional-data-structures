@@ -4,7 +4,6 @@
 
 (in-package #:fds)
 
-
 (defclass binomial-node ()
   ((key :initarg :key :initform nil :accessor key)
    (value :initform nil :initarg :value :accessor value)
