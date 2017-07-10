@@ -130,3 +130,10 @@
             (fds:to-dot h outs))
           (uiop:run-program (format nil "dot -Tpng -o ~a ~a" png-name dot-name))))
       (format html "</body></html>"))))
+
+
+(defun random-heap (&optional (size 10) (type 'fds:binomial) (max-value 1000))
+  (let ((the-heap (make-instance type)))
+    (dotimes (i size)
+      (setf the-heap (fds:insert the-heap (random max-value))))
+    the-heap))
