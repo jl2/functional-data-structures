@@ -76,3 +76,46 @@
      (make-instance 'binomial
                     :trees (merge-nodes (slot-value h2 'predicate) (slot-value h1 'trees) (slot-value h2 'trees))
                     :predicate (slot-value h1 'predicate)))))
+
+(defmethod show-heap ((nodes binomial-node) stream indentation)
+  "Write a text representation of the leftist-node structure to stream."
+  (if (null nodes)
+      (format stream "nil~%")
+      (let ((space-string (spaces indentation)))
+        (with-slots (key value children) nodes
+          (format stream "~a ~@[(~a) ~]~%" key value)
+          (dolist (child children)
+            (format stream "~a+-" space-string)
+            (show-heap child stream (+ 2 indentation))))))
+  nodes)
+
+(defmethod show-heap ((heap binomial) stream indentation)
+  "Write a text representation of the leftist heap to stream."
+  (declare (ignorable indentation stream))
+  (format stream "trees: ~a~%" (slot-value heap 'trees))
+  (dolist (tree (slot-value heap 'trees)) (show-heap tree stream indentation))
+  heap)
+
+(defmethod to-dot ((nodes binomial-node) stream)
+  "Write a dot digraph of the node structure to stream."
+  (labels ((inner-to-dot (nodes stream count)
+             (with-slots (key value children) nodes
+               (let ((o-count count)
+                     (n-count count))
+                 (format stream "~a [label=\"~a~@[ (~a) ~]\",shape=box];~%" o-count key value)
+                 (when children
+                   (dolist (child children)
+                     (format stream "~a->~a;~%" count (+ 1 n-count))
+                     (setf n-count (inner-to-dot left-child stream (+ 1 count))))
+                 n-count)))))
+    (inner-to-dot nodes stream 0)))
+
+
+(defmethod to-dot ((heap binomial) stream)
+  "Write a dot digraph of the heap to stream."
+  (format stream "digraph G {~%")
+
+  (to-dot (slot-value heap 'trees) stream)
+
+  (format stream "}~%")
+  heap)
